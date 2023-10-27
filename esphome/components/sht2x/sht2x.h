@@ -7,10 +7,10 @@
 #include <cinttypes>
 
 namespace esphome {
-namespace sht3xd {
+namespace sht2xd {
 
-/// This class implements support for the SHT3x-DIS family of temperature+humidity i2c sensors.
-class SHT3XDComponent : public PollingComponent, public sensirion_common::SensirionI2CDevice {
+/// This class implements support for the SHT2x family of temperature+humidity i2c sensors.
+class SHT2XComponent : public PollingComponent, public sensirion_common::SensirionI2CDevice {
  public:
   void set_temperature_sensor(sensor::Sensor *temperature_sensor) { temperature_sensor_ = temperature_sensor; }
   void set_humidity_sensor(sensor::Sensor *humidity_sensor) { humidity_sensor_ = humidity_sensor; }
@@ -27,5 +27,5 @@ class SHT3XDComponent : public PollingComponent, public sensirion_common::Sensir
   bool heater_enabled_{true};
 };
 
-}  // namespace sht3xd
+}  // namespace sht2x
 }  // namespace esphome

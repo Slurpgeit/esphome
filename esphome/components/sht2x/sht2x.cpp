@@ -1,52 +1,52 @@
-#include "sht3xd.h"
+#include "sht2x.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace sht3xd {
+namespace sht2x {
 
-static const char *const TAG = "sht3xd";
+static const char *const TAG = "sht2x";
 
-static const uint16_t SHT3XD_COMMAND_READ_SERIAL_NUMBER = 0x3780;
-static const uint16_t SHT3XD_COMMAND_READ_STATUS = 0xF32D;
-static const uint16_t SHT3XD_COMMAND_CLEAR_STATUS = 0x3041;
-static const uint16_t SHT3XD_COMMAND_HEATER_ENABLE = 0x306D;
-static const uint16_t SHT3XD_COMMAND_HEATER_DISABLE = 0x3066;
-static const uint16_t SHT3XD_COMMAND_SOFT_RESET = 0x30A2;
-static const uint16_t SHT3XD_COMMAND_POLLING_H = 0x2400;
-static const uint16_t SHT3XD_COMMAND_FETCH_DATA = 0xE000;
+static const uint16_t SHT2X_COMMAND_READ_SERIAL_NUMBER = 0x3780;
+static const uint16_t SHT2X_COMMAND_READ_STATUS = 0xF32D;
+static const uint16_t SHT2X_COMMAND_CLEAR_STATUS = 0x3041;
+static const uint16_t SHT2X_COMMAND_HEATER_ENABLE = 0x306D;
+static const uint16_t SHT2X_COMMAND_HEATER_DISABLE = 0x3066;
+static const uint16_t SHT2X_COMMAND_SOFT_RESET = 0x30A2;
+static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
+static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
 
-void SHT3XDComponent::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up SHT3xD...");
+void SHT2XComponent::setup() {
+  ESP_LOGCONFIG(TAG, "Setting up SHT2X...");
   uint16_t raw_serial_number[2];
-  if (!this->get_register(SHT3XD_COMMAND_READ_SERIAL_NUMBER, raw_serial_number, 2)) {
+  if (!this->get_register(SHT2X_COMMAND_READ_SERIAL_NUMBER, raw_serial_number, 2)) {
     this->mark_failed();
     return;
   }
-  if (!this->write_command(heater_enabled_ ? SHT3XD_COMMAND_HEATER_ENABLE : SHT3XD_COMMAND_HEATER_DISABLE)) {
+  if (!this->write_command(heater_enabled_ ? SHT2X_COMMAND_HEATER_ENABLE : SHT2X_COMMAND_HEATER_DISABLE)) {
     this->mark_failed();
     return;
   }
   uint32_t serial_number = (uint32_t(raw_serial_number[0]) << 16) | uint32_t(raw_serial_number[1]);
   ESP_LOGV(TAG, "    Serial Number: 0x%08" PRIX32, serial_number);
 }
-void SHT3XDComponent::dump_config() {
-  ESP_LOGCONFIG(TAG, "SHT3xD:");
+void SHT2XComponent::dump_config() {
+  ESP_LOGCONFIG(TAG, "SHT2X:");
   LOG_I2C_DEVICE(this);
   if (this->is_failed()) {
-    ESP_LOGE(TAG, "Communication with SHT3xD failed!");
+    ESP_LOGE(TAG, "Communication with SHT2X failed!");
   }
   LOG_UPDATE_INTERVAL(this);
 
   LOG_SENSOR("  ", "Temperature", this->temperature_sensor_);
   LOG_SENSOR("  ", "Humidity", this->humidity_sensor_);
 }
-float SHT3XDComponent::get_setup_priority() const { return setup_priority::DATA; }
-void SHT3XDComponent::update() {
+float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
+void SHT2XComponent::update() {
   if (this->status_has_warning()) {
     ESP_LOGD(TAG, "Retrying to reconnect the sensor.");
-    this->write_command(SHT3XD_COMMAND_SOFT_RESET);
+    this->write_command(SHT2X_COMMAND_SOFT_RESET);
   }
-  if (!this->write_command(SHT3XD_COMMAND_POLLING_H)) {
+  if (!this->write_command(SHT2X_COMMAND_POLLING_H)) {
     this->status_set_warning();
     return;
   }
@@ -70,5 +70,5 @@ void SHT3XDComponent::update() {
   });
 }
 
-}  // namespace sht3xd
+}  // namespace sht2x
 }  // namespace esphome
