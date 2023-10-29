@@ -65,8 +65,9 @@ void SHT2XComponent::read_sensor(uint16_t &result) {
     this->status_set_warning();
     return;
   }
-   // grab first two bytes
-  result = (buffer[0] << 8) | buffer[1];
+
+  result = buffer[0] << 8;
+  result += buffer[1];
   result &= 0xFFFC;
 }
 
