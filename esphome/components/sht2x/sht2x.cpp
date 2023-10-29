@@ -7,15 +7,9 @@ namespace sht2x {
 
 static const char *const TAG = "sht2x";
 
-static const uint16_t SHT2X_COMMAND_READ_SERIAL_NUMBER = 0x3780;
-static const uint16_t SHT2X_COMMAND_READ_STATUS = 0xF32D;
-static const uint16_t SHT2X_COMMAND_CLEAR_STATUS = 0x3041;
-static const uint16_t SHT2X_COMMAND_HEATER_ENABLE = 0x306D;
-static const uint16_t SHT2X_COMMAND_HEATER_DISABLE = 0x3066;
-static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
+static const uint8_t SHT2X_COMMAND_TEMPERATURE = 0xF3;
 static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
-static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
-static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
+static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
 uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
 {
@@ -98,6 +92,24 @@ void SHT2XComponent::update() {
     }
     this->status_clear_warning();
   });
+
+  // read temperature
+  ESP_LOGD(TAG, "Reading temperature...");
+  this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
+  ESP_LOGD(TAG, "Reading temperature done.");
+
+  this->set_timeout(50, [this]() {
+    uint16_t _raw_temperature;
+    this->read_sensor(_raw_temperature);
+    float temperature = -46.85 + (175.72 / 65536.0) * float(_raw_temperature & 0xFFFC);
+    ESP_LOGD(TAG, "Got temperature=%.2f%%", temperature);
+
+    if (this->temperature_sensor_ != nullptr) {
+      this->temperature_sensor_->publish_state(temperature);
+    }
+    this->status_clear_warning();
+  });
+
 
   // this->set_timeout(50, [this]() {
   //   uint16_t raw_humidity[2];
