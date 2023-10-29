@@ -58,6 +58,7 @@ void SHT2XComponent::read_sensor(uint16_t &result) {
   uint8_t crc;
 
   this->read(buffer, 3);
+  ESP_LOGD(TAG, "Got data: 0x%02X 0x%02X 0x%02X", buffer[0], buffer[1], buffer[2]);
   crc = this->crc8(buffer, 2);
 
   if (crc != buffer[2]) {
@@ -98,7 +99,7 @@ void SHT2XComponent::update() {
   this->set_timeout(50, [this]() {
     uint16_t _raw_temperature;
     this->read_sensor(_raw_temperature);
-    float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
+    float temperature = 46.85 + (175.72 / 65536.0) * _raw_temperature;
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
     if (this->temperature_sensor_ != nullptr) {
