@@ -59,6 +59,22 @@ void SHT2XComponent::dump_config() {
 
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
 
+void SHT2XComponent::read_sensor(uint16_t &result) {
+  uint8_t buffer[3];
+  uint8_t crc;
+
+  this->read(buffer, 3);
+  crc = this->crc8(buffer, 2);
+
+  if (crc != buffer[2]) {
+    ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", buffer[2], crc);
+    this->status_set_warning();
+    return;
+  }
+   // grab first two bytes
+  result = (buffer[0] << 8) | buffer[1];
+}
+
 void SHT2XComponent::update() {
   ESP_LOGD(TAG, "Updating SHT2X...");
   if (this->status_has_warning()) {
@@ -71,27 +87,17 @@ void SHT2XComponent::update() {
   this->write(&SHT2X_COMMAND_HUMIDITY, 1);
   ESP_LOGD(TAG, "Reading humidity done.");
 
-  delay(50);
-  uint8_t humidity_buffer[3];
-  this->read(humidity_buffer, 3);
-  uint8_t crc = this->crc8(humidity_buffer, 2);
+  this->set_timeout(50, [this]() {
+    uint16_t _raw_humidity;
+    this->read_sensor(_raw_humidity);
+    float humidity = -6.0 + (125.0 / 65536.0) * float(_raw_humidity & 0xFFFC);
+    ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
-  if (crc != humidity_buffer[2]) {
-    ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", humidity_buffer[2], crc);
-    this->status_set_warning();
-    return;
-  }
-
-  // grab first two bytes
-  uint16_t _raw_humidity = (humidity_buffer[0] << 8) | humidity_buffer[1];
-  float humidity = -6.0 + (125.0 / 65536.0) * float(_raw_humidity & 0xFFFC);
-
-  ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
-
-    if (this->humidity_sensor_ != nullptr)
+    if (this->humidity_sensor_ != nullptr) {
       this->humidity_sensor_->publish_state(humidity);
+    }
     this->status_clear_warning();
-
+  })
 
   // this->set_timeout(50, [this]() {
   //   uint16_t raw_humidity[2];
