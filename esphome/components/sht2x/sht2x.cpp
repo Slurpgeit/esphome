@@ -101,9 +101,9 @@ void SHT2XComponent::update() {
     float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
-    if (this->temperature_sensor_ != nullptr) {
-      this->temperature_sensor_->publish_state(temperature);
-    }
+    // if (this->temperature_sensor_ != nullptr) {
+    //   this->temperature_sensor_->publish_state(temperature);
+    // }
     this->status_clear_warning();
   });
 
