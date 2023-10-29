@@ -67,6 +67,7 @@ void SHT2XComponent::read_sensor(uint16_t &result) {
   }
    // grab first two bytes
   result = (buffer[0] << 8) | buffer[1];
+  result &= 0xFFFC;
 }
 
 void SHT2XComponent::update() {
@@ -84,7 +85,7 @@ void SHT2XComponent::update() {
   this->set_timeout(50, [this]() {
     uint16_t _raw_humidity;
     this->read_sensor(_raw_humidity);
-    float humidity = -6.0 + (125.0 / 65536.0) * (_raw_humidity & 0xFFFC);
+    float humidity = -6.0 + (125.0 / 65536.0) * (_raw_humidity);
     ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
     if (this->humidity_sensor_ != nullptr) {
@@ -101,7 +102,7 @@ void SHT2XComponent::update() {
   this->set_timeout(50, [this]() {
     uint16_t _raw_temperature;
     this->read_sensor(_raw_temperature);
-    float temperature = -float(_raw_temperature & 0xFFFC) * 175.72f / 65536.0f - 46.85f;
+    float temperature = -46.85 + (175.72 / 65536.0) * (_raw_temperature);
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
     if (this->temperature_sensor_ != nullptr) {
