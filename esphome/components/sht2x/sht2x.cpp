@@ -75,6 +75,10 @@ void SHT2XComponent::update() {
   uint8_t humidity_buffer[3];
   this->read(humidity_buffer, 3);
 
+  if (crc8(humidity_buffer, 2) == humidity_buffer[2]) {
+    ESP_LOGD(TAG, "CRC ok!");
+  }
+
   uint16_t _raw_humidity;
   _raw_humidity = humidity_buffer[0] << 8;
   _raw_humidity += humidity_buffer[1];
