@@ -1,5 +1,6 @@
 #include "sht2x.h"
 #include "esphome/core/log.h"
+#include "esphome/core/hal.h"
 
 namespace esphome {
 namespace sht2x {
