@@ -58,7 +58,6 @@ void SHT2XComponent::read_sensor(uint16_t &result) {
   uint8_t crc;
 
   this->read(buffer, 3);
-  ESP_LOGD(TAG, "Got data: 0x%02X 0x%02X 0x%02X", buffer[0], buffer[1], buffer[2]);
   crc = this->crc8(buffer, 2);
 
   if (crc != buffer[2]) {
