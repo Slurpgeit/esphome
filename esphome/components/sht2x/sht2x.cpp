@@ -48,7 +48,7 @@ void SHT2XComponent::update() {
 
   // read humidity
   ESP_LOGD(TAG, "Reading humidity...");
-  this->write_command(SHT2X_COMMAND_HUMIDITY);
+  this->write(&SHT2X_COMMAND_HUMIDITY, 1);
   ESP_LOGD(TAG, "Reading humidity done.");
 
   this->set_timeout(50, [this]() {
