@@ -75,7 +75,7 @@ void SHT2XComponent::update() {
   uint8_t raw_humidity[3];
   if (!this->read(raw_humidity, 3)) {
     this->status_set_warning();
-    return;
+    // return;
   }
 
   float humidity = -6.0 + (125.0 / 65536.0) * raw_humidity[1];
