@@ -25,6 +25,7 @@ class SHT2XComponent : public PollingComponent, public sensirion_common::Sensiri
   sensor::Sensor *temperature_sensor_{nullptr};
   sensor::Sensor *humidity_sensor_{nullptr};
   bool heater_enabled_{true};
+  uint8_t crc8(const uint8_t *data, uint8_t len);
 };
 
 }  // namespace sht2x
