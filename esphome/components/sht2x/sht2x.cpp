@@ -64,7 +64,6 @@ uint16_t SHT2XComponent::read_temperature() {
   if (crc != buffer[2]) {
     ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", buffer[2], crc);
     this->status_set_warning();
-    return;
   }
 
   result = buffer[0] << 8;
@@ -84,7 +83,6 @@ void SHT2XComponent::read_humidity(uint16_t &result) {
   if (crc != buffer[2]) {
     ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", buffer[2], crc);
     this->status_set_warning();
-    return;
   }
 
   result = buffer[0] << 8;
