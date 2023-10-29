@@ -17,24 +17,24 @@ static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
 static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
 
-// uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
-// {
-//   //  CRC-8 formula from page 14 of SHT spec pdf
-//   //  Sensirion_Humidity_Sensors_SHT2x_CRC_Calculation.pdf
-//   const uint8_t POLY = 0x31;
-//   uint8_t crc = 0x00;
+uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
+{
+  //  CRC-8 formula from page 14 of SHT spec pdf
+  //  Sensirion_Humidity_Sensors_SHT2x_CRC_Calculation.pdf
+  const uint8_t POLY = 0x31;
+  uint8_t crc = 0x00;
 
-//   for (uint8_t j = len; j; --j)
-//   {
-//     crc ^= *data++;
+  for (uint8_t j = len; j; --j)
+  {
+    crc ^= *data++;
 
-//     for (uint8_t i = 8; i; --i)
-//     {
-//       crc = (crc & 0x80) ? (crc << 1) ^ POLY : (crc << 1);
-//     }
-//   }
-//   return crc;
-// }
+    for (uint8_t i = 8; i; --i)
+    {
+      crc = (crc & 0x80) ? (crc << 1) ^ POLY : (crc << 1);
+    }
+  }
+  return crc;
+}
 
 void SHT2XComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up sht2x...");
@@ -74,12 +74,15 @@ void SHT2XComponent::update() {
   delay(50);
   uint8_t humidity_buffer[3];
   this->read(humidity_buffer, 3);
-  uint8_t crc = crc8(humidity_buffer, 2);
+  uint8_t crc = this->crc8(humidity_buffer, 2);
 
   if (crc != humidity_buffer[2]) {
     ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", humidity_buffer[2], crc);
+    this->status_set_warning();
+    return;
   }
 
+  // grab first two bytes
   uint16_t _raw_humidity = (humidity_buffer[0] << 8) | humidity_buffer[1];
   float humidity = -6.0 + (125.0 / 65536.0) * float(_raw_humidity & 0xFFFC);
 
