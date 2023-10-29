@@ -71,7 +71,7 @@ void SHT2XComponent::update() {
   this->write(&SHT2X_COMMAND_HUMIDITY, 1);
   ESP_LOGD(TAG, "Reading humidity done.");
 
-  delay(100);
+  delay(50);
   uint8_t humidity_buffer[3];
   this->read(humidity_buffer, 3);
 
@@ -79,11 +79,14 @@ void SHT2XComponent::update() {
   _raw_humidity = humidity_buffer[0] << 8;
   _raw_humidity += humidity_buffer[1];
   _raw_humidity &= 0xFFFC;
-  ESP_LOGD(TAG, "Raw hum=%.2f", _raw_humidity);
-  ESP_LOGD(TAG, "Status=%.2f", humidity_buffer[1] & 0x0003);
 
   float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
-  ESP_LOGD(TAG, "Got hum=%.2f", humidity);
+
+  ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
+
+    if (this->humidity_sensor_ != nullptr)
+      this->humidity_sensor_->publish_state(humidity);
+    this->status_clear_warning();
 
 
   // this->set_timeout(50, [this]() {
