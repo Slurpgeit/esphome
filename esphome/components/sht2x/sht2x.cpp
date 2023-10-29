@@ -97,7 +97,7 @@ void SHT2XComponent::update() {
       this->humidity_sensor_->publish_state(humidity);
     }
     this->status_clear_warning();
-  })
+  });
 
   // this->set_timeout(50, [this]() {
   //   uint16_t raw_humidity[2];
