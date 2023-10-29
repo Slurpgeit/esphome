@@ -7,7 +7,7 @@
 #include <cinttypes>
 
 namespace esphome {
-namespace sht2xd {
+namespace sht2x {
 
 /// This class implements support for the SHT2x family of temperature+humidity i2c sensors.
 class SHT2XComponent : public PollingComponent, public sensirion_common::SensirionI2CDevice {
