@@ -54,7 +54,7 @@ void SHT2XComponent::update() {
 
   delay(100);
   uint16_t raw_humidity;
-  if (!this->read(reinterpret_cast<uint8_t *>(&raw_humidity), 2) != i2c::ERROR_OK) {
+  if (!this->SensirionI2CDevice::read_data(&raw_humidity, 1)) {
     this->status_set_warning();
     return;
   }
