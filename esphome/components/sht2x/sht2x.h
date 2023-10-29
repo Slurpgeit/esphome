@@ -20,6 +20,7 @@ class SHT2XComponent : public PollingComponent, public sensirion_common::Sensiri
   float get_setup_priority() const override;
   void update() override;
   void set_heater_enabled(bool heater_enabled) { heater_enabled_ = heater_enabled; }
+  bool request_humidity();
 
  protected:
   sensor::Sensor *temperature_sensor_{nullptr};
