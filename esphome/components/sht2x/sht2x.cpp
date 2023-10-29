@@ -52,8 +52,8 @@ void SHT2XComponent::update() {
   ESP_LOGD(TAG, "Reading humidity done.");
 
   this->set_timeout(50, [this]() {
-    uint16_t raw_humidity[2];
-    if (!this->read_data(raw_humidity, 2)) {
+    uint16_t raw_humidity;
+    if (!this->read(reinterpret_cast<uint8_t *>(&raw_humidity), 2) != i2c::ERROR_OK) {
       this->status_set_warning();
       // return;
     }
