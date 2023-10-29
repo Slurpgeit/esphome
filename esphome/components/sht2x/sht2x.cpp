@@ -11,12 +11,12 @@ static const uint16_t SHT2X_COMMAND_READ_STATUS = 0xF32D;
 static const uint16_t SHT2X_COMMAND_CLEAR_STATUS = 0x3041;
 static const uint16_t SHT2X_COMMAND_HEATER_ENABLE = 0x306D;
 static const uint16_t SHT2X_COMMAND_HEATER_DISABLE = 0x3066;
-static const uint16_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
+static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
 static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
 
 void SHT2XComponent::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up SHT2X...");
+  ESP_LOGCONFIG(TAG, "Setting up sht2x...");
   if (!this->write_command(SHT2X_COMMAND_SOFT_RESET)) {
     this->mark_failed();
     return;
@@ -24,7 +24,7 @@ void SHT2XComponent::setup() {
 }
 
 void SHT2XComponent::dump_config() {
-  ESP_LOGCONFIG(TAG, "SHT2X:");
+  ESP_LOGCONFIG(TAG, "sht2x:");
   LOG_I2C_DEVICE(this);
   if (this->is_failed()) {
     ESP_LOGE(TAG, "Communication with SHT2X failed!");
