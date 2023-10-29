@@ -69,6 +69,9 @@ void SHT2XComponent::read_sensor(uint16_t &result) {
   result = buffer[0] << 8;
   result += buffer[1];
   result &= 0xFFFC;
+
+  float temperature = -46.85 + (175.72 / 65536.0) * result;
+  ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 }
 
 void SHT2XComponent::update() {
