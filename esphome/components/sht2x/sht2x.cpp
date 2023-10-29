@@ -72,13 +72,17 @@ void SHT2XComponent::update() {
   ESP_LOGD(TAG, "Reading humidity done.");
 
   delay(100);
-  uint8_t raw_humidity[3];
-  if (!this->read(raw_humidity, 3)) {
-    this->status_set_warning();
-    // return;
-  }
+  uint8_t humidity_buffer[3];
+  this->read(humidity_buffer, 3);
 
-  float humidity = -6.0 + (125.0 / 65536.0) * raw_humidity[1];
+  uint16_t _raw_humidity;
+  _raw_humidity = humidity_buffer[0] << 8;
+  _raw_humidity += humidity_buffer[1];
+  _raw_humidity &= 0xFFFC;
+  ESP_LOGD(TAG, "Raw hum=%.2f", _raw_humidity);
+  ESP_LOGD(TAG, "Status=%.2f", humidity_buffer[1] & 0x0003);
+
+  float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
   ESP_LOGD(TAG, "Got hum=%.2f", humidity);
 
 
