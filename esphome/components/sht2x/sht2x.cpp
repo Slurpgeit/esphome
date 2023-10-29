@@ -96,10 +96,10 @@ void SHT2XComponent::update() {
   // read temperature
   this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
 
-  this->set_timeout(50, [this]() {
+  this->set_timeout(100, [this]() {
     uint16_t _raw_temperature;
     this->read_sensor(_raw_temperature);
-    float temperature = 46.85 + (175.72 / 65536.0) * _raw_temperature;
+    float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
     if (this->temperature_sensor_ != nullptr) {
