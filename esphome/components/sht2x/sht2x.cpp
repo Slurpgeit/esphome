@@ -71,7 +71,7 @@ uint16_t SHT2XComponent::read_temperature() {
   result += buffer[1];
   result &= 0xFFFC;
 
-  return result
+  return result;
 }
 
 void SHT2XComponent::read_humidity(uint16_t &result) {
