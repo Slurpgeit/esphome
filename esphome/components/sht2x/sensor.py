@@ -41,7 +41,7 @@ CONFIG_SCHEMA = (
             cv.Optional(CONF_HEATER_ENABLED, default=False): cv.boolean,
         },
     )
-    .extend(cv.polling_component_schema("60s"))
+    .extend(cv.polling_component_schema("10s"))
     .extend(i2c.i2c_device_schema(0x40))
 )
 

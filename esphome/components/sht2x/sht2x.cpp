@@ -22,6 +22,7 @@ void SHT2XComponent::setup() {
     this->mark_failed();
     return;
   }
+  ESP_LOGD(TAG, "SHT2X soft reset done.");
 }
 
 void SHT2XComponent::dump_config() {
@@ -38,21 +39,17 @@ void SHT2XComponent::dump_config() {
 
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
 
-bool SHT2XComponent::request_humidity() {
-  return this->write_command(SHT2X_COMMAND_HUMIDITY);
-}
-
 void SHT2XComponent::update() {
+  ESP_LOGD(TAG, "Updating SHT2X...");
   if (this->status_has_warning()) {
     ESP_LOGD(TAG, "Retrying to reconnect the sensor.");
     this->write_command(SHT2X_COMMAND_SOFT_RESET);
   }
 
   // read humidity
-  if (!this->request_humidity()) {
-    this->status_set_warning();
-    return;
-  }
+  ESP_LOGD(TAG, "Reading humidity...");
+  this->write_command(SHT2X_COMMAND_HUMIDITY);
+  ESP_LOGD(TAG, "Reading humidity done.");
 
   this->set_timeout(50, [this]() {
     uint16_t raw_humidity[2];
