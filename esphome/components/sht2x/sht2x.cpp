@@ -74,17 +74,14 @@ void SHT2XComponent::update() {
   delay(50);
   uint8_t humidity_buffer[3];
   this->read(humidity_buffer, 3);
+  uint8_t crc = crc8(humidity_buffer, 2);
 
-  if (crc8(humidity_buffer, 2) == humidity_buffer[2]) {
-    ESP_LOGD(TAG, "CRC ok!");
+  if (crc != humidity_buffer[2]) {
+    ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", humidity_buffer[2], crc);
   }
 
-  uint16_t _raw_humidity;
-  _raw_humidity = humidity_buffer[0] << 8;
-  _raw_humidity += humidity_buffer[1];
-  _raw_humidity &= 0xFFFC;
-
-  float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
+  uint16_t _raw_humidity = (humidity_buffer[0] << 8) | humidity_buffer[1];
+  float humidity = -6.0 + (125.0 / 65536.0) * float(_raw_humidity & 0xFFFC);
 
   ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
