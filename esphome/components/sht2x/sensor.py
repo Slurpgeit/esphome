@@ -17,15 +17,15 @@ CONF_HEATER_ENABLED = "heater_enabled"
 DEPENDENCIES = ["i2c"]
 AUTO_LOAD = ["sensirion_common"]
 
-sht3xd_ns = cg.esphome_ns.namespace("sht3xd")
-SHT3XDComponent = sht3xd_ns.class_(
-    "SHT3XDComponent", cg.PollingComponent, sensirion_common.SensirionI2CDevice
+sht2x_ns = cg.esphome_ns.namespace("sht2x")
+SHT2XComponent = sht2x_ns.class_(
+    "SHT2XComponent", cg.PollingComponent, sensirion_common.SensirionI2CDevice
 )
 
 CONFIG_SCHEMA = (
     cv.Schema(
         {
-            cv.GenerateID(): cv.declare_id(SHT3XDComponent),
+            cv.GenerateID(): cv.declare_id(SHT2XComponent),
             cv.Required(CONF_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
                 accuracy_decimals=1,
@@ -42,7 +42,7 @@ CONFIG_SCHEMA = (
         },
     )
     .extend(cv.polling_component_schema("60s"))
-    .extend(i2c.i2c_device_schema(0x44))
+    .extend(i2c.i2c_device_schema(0x40))
 )
 
 

@@ -11,24 +11,18 @@ static const uint16_t SHT2X_COMMAND_READ_STATUS = 0xF32D;
 static const uint16_t SHT2X_COMMAND_CLEAR_STATUS = 0x3041;
 static const uint16_t SHT2X_COMMAND_HEATER_ENABLE = 0x306D;
 static const uint16_t SHT2X_COMMAND_HEATER_DISABLE = 0x3066;
-static const uint16_t SHT2X_COMMAND_SOFT_RESET = 0x30A2;
+static const uint16_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
 static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
 
 void SHT2XComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up SHT2X...");
-  uint16_t raw_serial_number[2];
-  if (!this->get_register(SHT2X_COMMAND_READ_SERIAL_NUMBER, raw_serial_number, 2)) {
+  if (!this->write_command(SHT2X_COMMAND_SOFT_RESET)) {
     this->mark_failed();
     return;
   }
-  if (!this->write_command(heater_enabled_ ? SHT2X_COMMAND_HEATER_ENABLE : SHT2X_COMMAND_HEATER_DISABLE)) {
-    this->mark_failed();
-    return;
-  }
-  uint32_t serial_number = (uint32_t(raw_serial_number[0]) << 16) | uint32_t(raw_serial_number[1]);
-  ESP_LOGV(TAG, "    Serial Number: 0x%08" PRIX32, serial_number);
 }
+
 void SHT2XComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "SHT2X:");
   LOG_I2C_DEVICE(this);
@@ -40,15 +34,13 @@ void SHT2XComponent::dump_config() {
   LOG_SENSOR("  ", "Temperature", this->temperature_sensor_);
   LOG_SENSOR("  ", "Humidity", this->humidity_sensor_);
 }
+
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
+
 void SHT2XComponent::update() {
   if (this->status_has_warning()) {
     ESP_LOGD(TAG, "Retrying to reconnect the sensor.");
     this->write_command(SHT2X_COMMAND_SOFT_RESET);
-  }
-  if (!this->write_command(SHT2X_COMMAND_POLLING_H)) {
-    this->status_set_warning();
-    return;
   }
 
   this->set_timeout(50, [this]() {
@@ -58,8 +50,8 @@ void SHT2XComponent::update() {
       return;
     }
 
-    float temperature = 175.0f * float(raw_data[0]) / 65535.0f - 45.0f;
-    float humidity = 100.0f * float(raw_data[1]) / 65535.0f;
+    float temperature = -46.85 + (175.72 / 65536.0) * float(raw_data[0]);
+    float humidity = -6.0 + (125.0 / 65536.0) * float(raw_data[1]);
 
     ESP_LOGD(TAG, "Got temperature=%.2f°C humidity=%.2f%%", temperature, humidity);
     if (this->temperature_sensor_ != nullptr)
