@@ -17,24 +17,24 @@ static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint16_t SHT2X_COMMAND_POLLING_H = 0x2400;
 static const uint16_t SHT2X_COMMAND_FETCH_DATA = 0xE000;
 
-uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
-{
-  //  CRC-8 formula from page 14 of SHT spec pdf
-  //  Sensirion_Humidity_Sensors_SHT2x_CRC_Calculation.pdf
-  const uint8_t POLY = 0x31;
-  uint8_t crc = 0x00;
+// uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
+// {
+//   //  CRC-8 formula from page 14 of SHT spec pdf
+//   //  Sensirion_Humidity_Sensors_SHT2x_CRC_Calculation.pdf
+//   const uint8_t POLY = 0x31;
+//   uint8_t crc = 0x00;
 
-  for (uint8_t j = len; j; --j)
-  {
-    crc ^= *data++;
+//   for (uint8_t j = len; j; --j)
+//   {
+//     crc ^= *data++;
 
-    for (uint8_t i = 8; i; --i)
-    {
-      crc = (crc & 0x80) ? (crc << 1) ^ POLY : (crc << 1);
-    }
-  }
-  return crc;
-}
+//     for (uint8_t i = 8; i; --i)
+//     {
+//       crc = (crc & 0x80) ? (crc << 1) ^ POLY : (crc << 1);
+//     }
+//   }
+//   return crc;
+// }
 
 void SHT2XComponent::setup() {
   ESP_LOGCONFIG(TAG, "Setting up sht2x...");
