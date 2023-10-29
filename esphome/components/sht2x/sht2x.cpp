@@ -53,9 +53,10 @@ void SHT2XComponent::dump_config() {
 
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
 
-void SHT2XComponent::read_temperature(uint16_t &result) {
+uint16_t SHT2XComponent::read_temperature() {
   uint8_t buffer[3];
   uint8_t crc;
+  uint16_t result;
 
   this->read(buffer, 3);
   crc = this->crc8(buffer, 2);
@@ -70,8 +71,7 @@ void SHT2XComponent::read_temperature(uint16_t &result) {
   result += buffer[1];
   result &= 0xFFFC;
 
-  float temperature = -46.85 + (175.72 / 65536.0) * result;
-  ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
+  return result
 }
 
 void SHT2XComponent::read_humidity(uint16_t &result) {
@@ -117,8 +117,7 @@ void SHT2XComponent::update() {
   this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
 
   this->set_timeout(100, [this]() {
-    uint16_t _raw_temperature;
-    this->read_temperature(_raw_temperature);
+    uint16_t _raw_temperature = this->read_temperature();
     float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
