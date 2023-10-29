@@ -77,7 +77,9 @@ void SHT2XComponent::update() {
     this->status_set_warning();
     return;
   }
-  ESP_LOGD(TAG, "Got hum=%.2f", raw_humidity);
+
+  float humidity = -6.0 + (125.0 / 65536.0) * raw_humidity[1];
+  ESP_LOGD(TAG, "Got hum=%.2f", humidity);
 
 
   // this->set_timeout(50, [this]() {
