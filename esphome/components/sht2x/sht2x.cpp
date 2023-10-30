@@ -12,10 +12,10 @@ static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
 uint8_t SHT2XComponent::get_firmware_version() {
-  uint8_t version[1] = 0;
+  uint8_t version[1] = { 0 };
   if(!this-write_command(0x84, 0xB8)) {
     this->mark_failed();
-    return 0;
+    return version;
   }
 
   if(this->read(version, 1) != i2c::ERROR_OK) {
