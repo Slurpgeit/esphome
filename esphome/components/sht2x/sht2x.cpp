@@ -55,14 +55,16 @@ void SHT2XComponent::setup() {
 void SHT2XComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "sht2x:");
   LOG_I2C_DEVICE(this);
+  ESP_LOGCONFIG(TAG, "  Firmware version: %.2f °C", this->get_firmware_version());
+  
   if (this->is_failed()) {
     ESP_LOGE(TAG, "Communication with SHT2X failed!");
   }
+  
   LOG_UPDATE_INTERVAL(this);
 
   LOG_SENSOR("  ", "Temperature", this->temperature_sensor_);
   LOG_SENSOR("  ", "Humidity", this->humidity_sensor_);
-  ESP_LOGD(TAG, "Firmware version: %d", this->get_firmware_version());
 }
 
 
