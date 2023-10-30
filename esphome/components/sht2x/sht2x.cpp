@@ -85,33 +85,30 @@ void SHT2XComponent::update() {
     ESP_LOGE(TAG, "Reading temperature error");
   };
 
-  this->set_timeout(100, [this]() {
-    uint16_t _raw_temperature = this->read_raw_value();
-    float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
-    ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
+  delay(50);
+  uint16_t _raw_temperature = this->read_raw_value();
+  float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
+  ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
-    // if (this->temperature_sensor_ != nullptr) {
-    //   this->temperature_sensor_->publish_state(temperature);
-    // }
-  });
+  // if (this->temperature_sensor_ != nullptr) {
+  //   this->temperature_sensor_->publish_state(temperature);
+  // }
 
-  delay(1000);
-  
   // read humidity
   if (this->write(&SHT2X_COMMAND_HUMIDITY, 1) != i2c::ERROR_OK) {
     ESP_LOGE(TAG, "Reading humidity error");
   }
 
-  this->set_timeout(50, [this]() {
-    uint16_t _raw_humidity = this->read_raw_value();
-    float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
-    ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
+  delay(50);
+  uint16_t _raw_humidity = this->read_raw_value();
+  float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
+  ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
-    if (this->humidity_sensor_ != nullptr) {
-      this->humidity_sensor_->publish_state(humidity);
-    }
-    this->status_clear_warning();
-  });
+  if (this->humidity_sensor_ != nullptr) {
+    this->humidity_sensor_->publish_state(humidity);
+  }
+  this->status_clear_warning();
+
 
 
   // this->set_timeout(50, [this]() {
