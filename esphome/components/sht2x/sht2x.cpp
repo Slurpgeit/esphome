@@ -11,6 +11,9 @@ static const uint8_t SHT2X_COMMAND_TEMPERATURE = 0xF3;
 static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
+static const uint16_t SHT2X_DELAY_TEMPERATURE = 85;
+static const uint16_t SHT2X_DELAY_HUMIDITY = 30;
+
 uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
 {
   //  CRC-8 formula from page 14 of SHT spec pdf
@@ -78,7 +81,7 @@ float SHT2XComponent::get_temperature() {
     ESP_LOGE(TAG, "Reading temperature error");
   };
 
-  delay(85); // NOLINT
+  delay(SHT2X_DELAY_TEMPERATURE); // NOLINT
   uint16_t _raw_temperature = read_raw_value();
   float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
   return temperature;
@@ -89,7 +92,7 @@ float SHT2XComponent::get_humidity() {
     ESP_LOGE(TAG, "Reading humidity error");
   }
 
-  delay(30);
+  delay(SHT2X_DELAY_HUMIDITY); // NOLINT
   uint16_t _raw_humidity = read_raw_value();
   float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
   return humidity;
