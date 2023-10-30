@@ -18,7 +18,7 @@ uint8_t SHT2XComponent::get_firmware_version() {
     return 0;
   }
 
-  if(this->read(1, &version) != i2c::ERROR_OK) {
+  if(this->read(version, 1) != i2c::ERROR_OK) {
     this->mark_failed();
     ESP_LOGE(TAG, "Could not read firmware version")
   }
