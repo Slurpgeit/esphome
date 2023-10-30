@@ -14,6 +14,7 @@ from esphome.const import (
 
 DEPENDENCIES = ["i2c"]
 AUTO_LOAD = ["sensirion_common"]
+SHT2X_ADDRESS = 0x40
 
 sht2x_ns = cg.esphome_ns.namespace("sht2x")
 SHT2XComponent = sht2x_ns.class_(
@@ -26,20 +27,20 @@ CONFIG_SCHEMA = (
             cv.GenerateID(): cv.declare_id(SHT2XComponent),
             cv.Required(CONF_TEMPERATURE): sensor.sensor_schema(
                 unit_of_measurement=UNIT_CELSIUS,
-                accuracy_decimals=1,
+                accuracy_decimals=2,
                 device_class=DEVICE_CLASS_TEMPERATURE,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
             cv.Required(CONF_HUMIDITY): sensor.sensor_schema(
                 unit_of_measurement=UNIT_PERCENT,
-                accuracy_decimals=1,
+                accuracy_decimals=2,
                 device_class=DEVICE_CLASS_HUMIDITY,
                 state_class=STATE_CLASS_MEASUREMENT,
             ),
         },
     )
     .extend(cv.polling_component_schema("30s"))
-    .extend(i2c.i2c_device_schema(0x40))
+    .extend(i2c.i2c_device_schema(SHT2X_ADDRESS))
 )
 
 
