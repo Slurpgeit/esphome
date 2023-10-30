@@ -96,7 +96,7 @@ void SHT2XComponent::update() {
   // read temperature
   this->set_timeout(1000, [this]() {
     this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
-  })
+  });
 
   this->set_timeout(100, [this]() {
     uint16_t _raw_temperature = this->read_raw_value();
