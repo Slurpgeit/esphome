@@ -62,7 +62,7 @@ void SHT2XComponent::dump_config() {
 
   LOG_SENSOR("  ", "Temperature", this->temperature_sensor_);
   LOG_SENSOR("  ", "Humidity", this->humidity_sensor_);
-  ESP_LOGD(TAG, "Firmware version: %.2f", this->get_firmware_version);
+  ESP_LOGD(TAG, "Firmware version: %d", this->get_firmware_version());
 }
 
 
