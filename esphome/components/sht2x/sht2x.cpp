@@ -14,6 +14,7 @@ static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 static const uint8_t SHT2X_COMMAND_FIRMWARE_VERSION = 0x84;
 static const uint8_t SHT2X_DATA_FIRMWARE_VERSION = 0xB8;
 
+
 uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version = 0;
   if(this->write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION) != i2c::ERROR_OK) {
