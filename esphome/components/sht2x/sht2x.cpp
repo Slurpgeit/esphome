@@ -18,12 +18,12 @@ uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version = 0;
   if(!this->write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION)) {
     this->status_set_warning();
-    return 0;
+    return 254;
   }
 
   if(this->read(&version, 1) != i2c::ERROR_OK) {
     this->status_set_warning();
-    return 0;
+    return 255;
   }
 
   return version;
@@ -59,7 +59,7 @@ void SHT2XComponent::setup() {
 void SHT2XComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "sht2x:");
   LOG_I2C_DEVICE(this);
-  ESP_LOGCONFIG(TAG, "  Firmware version: 0x%02X °C", this->get_firmware_version());
+  ESP_LOGCONFIG(TAG, "  Firmware version: 0x%02X", this->get_firmware_version());
   
   if (this->is_failed()) {
     ESP_LOGE(TAG, "Communication with SHT2X failed!");
