@@ -94,9 +94,9 @@ void SHT2XComponent::update() {
   });
 
   // read temperature
-  this->set_timeout(1000, [this]() {
-    this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
-  });
+  if (this->write(&SHT2X_COMMAND_TEMPERATURE, 1) != i2c::ERROR_OK) {
+    ESP_LOGE(TAG, "Reading temperature error");
+  };
 
   this->set_timeout(100, [this]() {
     uint16_t _raw_temperature = this->read_raw_value();
