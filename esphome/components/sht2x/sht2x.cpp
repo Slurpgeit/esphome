@@ -15,7 +15,7 @@ uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version = 0;
   if(!this-write_command(0x84, 0xB8)) {
     this->mark_failed();
-    return
+    return 0;
   }
 
   if(this->read(1, &version) != i2c::ERROR_OK) {
