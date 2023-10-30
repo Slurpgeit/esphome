@@ -53,7 +53,7 @@ void SHT2XComponent::dump_config() {
 
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
 
-uint16_t SHT2XComponent::read_temperature() {
+uint16_t SHT2XComponent::read_raw_value() {
   uint8_t buffer[3];
   uint8_t crc;
   uint16_t result;
@@ -73,23 +73,6 @@ uint16_t SHT2XComponent::read_temperature() {
   return result;
 }
 
-void SHT2XComponent::read_humidity(uint16_t &result) {
-  uint8_t buffer[3];
-  uint8_t crc;
-
-  this->read(buffer, 3);
-  crc = this->crc8(buffer, 2);
-
-  if (crc != buffer[2]) {
-    ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", buffer[2], crc);
-    this->status_set_warning();
-  }
-
-  result = buffer[0] << 8;
-  result += buffer[1];
-  result &= 0xFFFC;
-}
-
 void SHT2XComponent::update() {
   ESP_LOGD(TAG, "Updating SHT2X...");
   if (this->status_has_warning()) {
@@ -100,8 +83,7 @@ void SHT2XComponent::update() {
   // read humidity
   this->write(&SHT2X_COMMAND_HUMIDITY, 1);
   this->set_timeout(50, [this]() {
-    uint16_t _raw_humidity;
-    this->read_humidity(_raw_humidity);
+    uint16_t _raw_humidity = this->read_raw_value();
     float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
     ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
@@ -112,10 +94,12 @@ void SHT2XComponent::update() {
   });
 
   // read temperature
-  this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
+  this->set_timeout(1000, [this]() {
+    this->write(&SHT2X_COMMAND_TEMPERATURE, 1);
+  })
 
   this->set_timeout(100, [this]() {
-    uint16_t _raw_temperature = this->read_temperature();
+    uint16_t _raw_temperature = this->read_raw_value();
     float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
     ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
