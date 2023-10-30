@@ -95,7 +95,7 @@ void SHT2XComponent::update() {
     // }
   });
 
-  delay(5000);
+  delay(1000);
   
   // read humidity
   if (this->write(&SHT2X_COMMAND_HUMIDITY, 1) != i2c::ERROR_OK) {
