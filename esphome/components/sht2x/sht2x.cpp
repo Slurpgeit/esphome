@@ -81,7 +81,10 @@ void SHT2XComponent::update() {
   }
 
   // read humidity
-  this->write(&SHT2X_COMMAND_HUMIDITY, 1);
+  if (this->write(&SHT2X_COMMAND_HUMIDITY, 1) != i2c::ERROR_OK) {
+    ESP_LOGE(TAG, "Reading humidity error");
+  }
+
   this->set_timeout(50, [this]() {
     uint16_t _raw_humidity = this->read_raw_value();
     float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
