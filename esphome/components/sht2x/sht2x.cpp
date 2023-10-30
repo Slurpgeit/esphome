@@ -93,7 +93,6 @@ void SHT2XComponent::update() {
     // if (this->temperature_sensor_ != nullptr) {
     //   this->temperature_sensor_->publish_state(temperature);
     // }
-    this->status_clear_warning();
   });
   
   // read humidity
