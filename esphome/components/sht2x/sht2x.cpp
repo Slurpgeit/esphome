@@ -11,12 +11,9 @@ static const uint8_t SHT2X_COMMAND_TEMPERATURE = 0xF3;
 static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
-static const uint8_t SHT2X_COMMAND_FIRMWARE_VERSION = 0x84;
-static const uint8_t SHT2X_DATA_FIRMWARE_VERSION = 0xB8;
-
 uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version = 0;
-  if(!this->write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION)) {
+  if(!this->write_command((uint8_t)0x84, (uint8_t)8xB8)) {
     this->status_set_warning();
     return 254;
   }
