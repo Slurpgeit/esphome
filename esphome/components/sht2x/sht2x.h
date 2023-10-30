@@ -29,6 +29,7 @@ class SHT2XComponent : public PollingComponent, public sensirion_common::Sensiri
   uint16_t read_raw_value();
   float get_temperature();
   float get_humidity();
+  uint8_t get_firmware_version;
   
   bool heater_enabled_{true};
 };
