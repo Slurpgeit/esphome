@@ -11,7 +11,20 @@ static const uint8_t SHT2X_COMMAND_TEMPERATURE = 0xF3;
 static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
+uint8_t SHT2XComponent::get_firmware_version() {
+  uint8_t version = 0;
+  if(!this-write_command(0x84, 0xB8)) {
+    this->mark_failed();
+    return
+  }
 
+  if(this->read(1, &version) != i2c::ERROR_OK) {
+    this->mark_failed();
+    ESP_LOGE(TAG, "Could not read firmware version")
+  }
+
+  return version;
+}
 
 uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
 {
@@ -50,6 +63,7 @@ void SHT2XComponent::dump_config() {
 
   LOG_SENSOR("  ", "Temperature", this->temperature_sensor_);
   LOG_SENSOR("  ", "Humidity", this->humidity_sensor_);
+  ESP_LOGD(TAG, "Firmware version: %.2f", this->get_firmware_version);
 }
 
 
@@ -103,7 +117,6 @@ void SHT2XComponent::update() {
 
   float temperature = this->get_temperature();
   float humidity = this->get_humidity();
-  ESP_LOGD(TAG, "Got humidity=%.2f%%, temperature=%.2f°C", humidity, temperature);
 
   if (this->temperature_sensor_ != nullptr) {
     this->temperature_sensor_->publish_state(temperature);
@@ -113,7 +126,6 @@ void SHT2XComponent::update() {
     this->humidity_sensor_->publish_state(humidity);
   }
   this->status_clear_warning();
-
 }
 
 float SHT2XComponent::get_setup_priority() const { return setup_priority::DATA; }
