@@ -14,13 +14,12 @@ static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version[1];
   if(!this-write_command(0x84, 0xB8)) {
-    this->mark_failed();
+    this->status_set_warning();
     return 0;
   }
 
   if(this->read(version, 1) != i2c::ERROR_OK) {
-    this->mark_failed();
-    ESP_LOGE(TAG, "Could not read firmware version");
+    this->status_set_warning();
   }
 
   return version;
