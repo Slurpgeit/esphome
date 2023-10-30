@@ -80,20 +80,20 @@ void SHT2XComponent::update() {
     this->write_command(SHT2X_COMMAND_SOFT_RESET);
   }
 
-  // read temperature
-  if (this->write(&SHT2X_COMMAND_TEMPERATURE, 1) != i2c::ERROR_OK) {
-    ESP_LOGE(TAG, "Reading temperature error");
-  };
+  // // read temperature
+  // if (this->write(&SHT2X_COMMAND_TEMPERATURE, 1) != i2c::ERROR_OK) {
+  //   ESP_LOGE(TAG, "Reading temperature error");
+  // };
 
-  this->set_timeout(100, [this]() {
-    uint16_t _raw_temperature = this->read_raw_value();
-    float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
-    ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
+  // this->set_timeout(100, [this]() {
+  //   uint16_t _raw_temperature = this->read_raw_value();
+  //   float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
+  //   ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
 
-    // if (this->temperature_sensor_ != nullptr) {
-    //   this->temperature_sensor_->publish_state(temperature);
-    // }
-  });
+  //   // if (this->temperature_sensor_ != nullptr) {
+  //   //   this->temperature_sensor_->publish_state(temperature);
+  //   // }
+  // });
   
   // read humidity
   if (this->write(&SHT2X_COMMAND_HUMIDITY, 1) != i2c::ERROR_OK) {
