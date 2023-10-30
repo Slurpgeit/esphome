@@ -98,7 +98,7 @@ float SHT2XComponent::get_temperature() {
     ESP_LOGE(TAG, "Reading temperature error");
   };
 
-  delay(100);
+  delay(85); // NOLINT
   uint16_t _raw_temperature = read_raw_value();
   float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
   return temperature;
@@ -109,7 +109,7 @@ float SHT2XComponent::get_humidity() {
     ESP_LOGE(TAG, "Reading humidity error");
   }
 
-  delay(50);
+  delay(30);
   uint16_t _raw_humidity = read_raw_value();
   float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
   return humidity;
