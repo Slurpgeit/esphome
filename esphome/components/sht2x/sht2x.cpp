@@ -100,7 +100,7 @@ void SHT2XComponent::update() {
   }
 
   delay(50);
-  uint16_t _raw_humidity = this->read_raw_value();
+  uint16_t _raw_humidity = read_raw_value();
   float humidity = -6.0 + (125.0 / 65536.0) * _raw_humidity;
   ESP_LOGD(TAG, "Got humidity=%.2f%%", humidity);
 
