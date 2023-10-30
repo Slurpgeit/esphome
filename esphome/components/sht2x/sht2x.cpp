@@ -11,25 +11,6 @@ static const uint8_t SHT2X_COMMAND_TEMPERATURE = 0xF3;
 static const uint8_t SHT2X_COMMAND_HUMIDITY = 0xF5;
 static const uint8_t SHT2X_COMMAND_SOFT_RESET = 0xFE;
 
-static const uint8_t SHT2X_COMMAND_FIRMWARE_VERSION = 0x84;
-static const uint8_t SHT2X_DATA_FIRMWARE_VERSION = 0xB8;
-
-
-uint8_t SHT2XComponent::get_firmware_version() {
-  uint8_t version = 0;
-  if(this->write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION) != i2c::ERROR_OK) {
-    this->status_set_warning();
-    return 0;
-  }
-
-  if(this->read(&version, 1) != i2c::ERROR_OK) {
-    this->status_set_warning();
-    return 0;
-  }
-
-  return version;
-}
-
 uint8_t SHT2XComponent::crc8(const uint8_t *data, uint8_t len)
 {
   //  CRC-8 formula from page 14 of SHT spec pdf
@@ -60,7 +41,6 @@ void SHT2XComponent::setup() {
 void SHT2XComponent::dump_config() {
   ESP_LOGCONFIG(TAG, "sht2x:");
   LOG_I2C_DEVICE(this);
-  ESP_LOGCONFIG(TAG, "  Firmware version: 0x%02X", this->get_firmware_version());
   
   if (this->is_failed()) {
     ESP_LOGE(TAG, "Communication with SHT2X failed!");
