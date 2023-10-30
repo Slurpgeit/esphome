@@ -61,7 +61,9 @@ uint16_t SHT2XComponent::read_raw_value() {
   uint8_t crc;
   uint16_t result;
 
-  this->read(buffer, 3);
+  if (this->read(buffer, 3) != i2c::ERROR_OK) {
+    this->status_set_warning();
+  }
   crc = crc8(buffer, 2);
 
   if (crc != buffer[2]) {
