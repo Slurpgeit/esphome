@@ -16,7 +16,7 @@ static const uint8_t SHT2X_DATA_FIRMWARE_VERSION = 0xB8;
 
 uint8_t SHT2XComponent::get_firmware_version() {
   uint8_t version = 0;
-  if(!this-write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION) {
+  if(!this-write_command(SHT2X_COMMAND_FIRMWARE_VERSION, SHT2X_DATA_FIRMWARE_VERSION)) {
     this->status_set_warning();
     return 0;
   }
