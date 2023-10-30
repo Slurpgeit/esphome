@@ -36,6 +36,8 @@ void SHT2XComponent::setup() {
     this->mark_failed();
     return;
   }
+  // Wait for software reset to complete
+  delay(15);
   ESP_LOGD(TAG, "SHT2X soft reset done.");
 }
 
@@ -59,7 +61,7 @@ uint16_t SHT2XComponent::read_raw_value() {
   uint16_t result;
 
   this->read(buffer, 3);
-  crc = this->crc8(buffer, 2);
+  crc = crc8(buffer, 2);
 
   if (crc != buffer[2]) {
     ESP_LOGE(TAG, "CRC8 Checksum invalid. 0x%02X != 0x%02X", buffer[2], crc);
