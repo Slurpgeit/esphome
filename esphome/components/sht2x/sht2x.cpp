@@ -87,7 +87,7 @@ void SHT2XComponent::update() {
     ESP_LOGE(TAG, "Reading temperature error");
   };
 
-  delay(50);
+  delay(100);
   uint16_t _raw_temperature = read_raw_value();
   float temperature = -46.85 + (175.72 / 65536.0) * _raw_temperature;
   ESP_LOGD(TAG, "Got temperature=%.2f°C", temperature);
