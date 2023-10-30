@@ -96,7 +96,7 @@ void SHT2XComponent::update() {
     this->status_clear_warning();
   });
   
-  read humidity
+  // read humidity
   if (this->write(&SHT2X_COMMAND_HUMIDITY, 1) != i2c::ERROR_OK) {
     ESP_LOGE(TAG, "Reading humidity error");
   }
